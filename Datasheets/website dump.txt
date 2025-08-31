@@ -1,0 +1,1092 @@
+Navigation menu
+Waveshare Wiki
+Raspberry Pi 
+AI 
+Displays 
+IoT 
+Robotics 
+MCU/FPGA 
+Support
+IC
+Product name search
+ESP32-S3-Touch-LCD-5
+ESP32-S3-Touch-LCD-5
+360px-Esp32-s3-touch-lcd-5-001.jpg
+
+ESP32-S3, Type C USB, 800x480
+ESP32-S3-Touch-LCD-5B
+360px-Esp32-s3-touch-lcd-5-001.jpg
+
+ESP32-S3, Type C USB, 1024x600
+ESP32-S3-LCD-5
+360px-Esp32-s3-touch-lcd-5-002.jpg
+
+ESP32-S3, Type C USB, 800x480
+ESP32-S3-LCD-5B
+360px-Esp32-s3-touch-lcd-5-002.jpg
+
+ESP32-S3, Type C USB, 1024x600
+Overview
+Introduction
+ESP32-S3-Touch-LCD-5 is a low-cost, high-performance MCU board designed by Waveshare. It supports 2.4GHz WiFi and BLE 5, integrates high-capacity Flash and PSRAM, and has a 5-inch wide capacitive touch LCD screen on board to smoothly run GUI interface programs such as LVGL. It combines a variety of peripheral interfaces (e.g., CAN, I2C, RS485, etc.) to quickly develop applications such as HMIs for ESP32-S3. With a wide range of functions and interfaces, it can meet power consumption requirements in Internet of Things (IoT), mobile devices, smart home and other applications.
+
+Features
+Equipped with high-performance Xtensa 32-bit LX7 dual-core processor, up to 240MHz main frequency
+Supports 2.4GHz Wi-Fi (802.11 b/g/n) and Bluetooth 5 (BLE), with onboard antenna
+Built-in 512KB SRAM and 384KB ROM, stacked with 16MB Flash and 8MB PSRAM
+Onboard 5inch wide capacitive touch screen with 800 × 480 or 1024 × 600 resolution, 65K color
+Supports I2C interface control for capacitive touch, with 5-point touch, and supports interrupts
+Onboard voltage regulator chip, supporting 7V~36V wide voltage supply
+Onboard RTC chip and battery holder, ensuring time data is not lost when power loss (RTC battery required)
+Onboard CAN, RS485, I2C interface and TF card slot, integrates full-speed USB
+Supports flexible clock, module power supply independent setting and other controls to realize low power consumption in different scenarios
+Version Options
+ESP32-S3-Touch-LCD-5-details-2-3.jpg
+
+Onboard Resources
+ESP32-S3-Touch-LCD-5-details-intro.png
+
+1. ESP32-S3-WROOM-1-N16R8
+   WiFi Bluetooth SoC module with 240MHz operating frequency
+   Package 8MB PSRAM and 16MB Flash
+
+2. TF card slot
+   Used to connect the TF card
+
+3. USB Type-C interface
+   Used to power the device and program flashing
+
+4. BOOT button
+   Press and hold to power on for program flashing
+
+5. RESET button
+   Press the Reset to restart ESP32S3
+
+6. Optocoupler isolation
+   Isolate and protect the I/O pins on the board
+
+7. 5Inch touch panel connector
+   Connect the touch screen cable
+
+8. 5inch display panel connector
+   Connect the LCD cable
+
+9. CAN and RS485 terminal resistor switch
+   The bus balance resistor switch is default off
+
+10. Battery connection switch
+   ON: Connect the battery    OFF: Disconnect the battery
+
+11. 3.7V single lithium battery 1.25 interface
+   MX1.25 interface, suitable for all 3.7V lithium batteries
+
+12. Indicator
+   DONE: Lithium battery charging completed indicator
+   CHG: Lithium battery charging indicator
+   PWR: Power indicator
+   (If connected to power, but not connected to a battery or the switch is off, then CHG blinks while DONE is always lit)
+
+13. 7-36V DC power supply
+   Wide voltage input interface, supports 7-36V DC power supply
+
+14. I2C interface
+   VOUT output 5V/3.3V (switched by the on-board resistor, choose one of the two)
+
+15. CAN interface
+   CAN is compatible with the 2.0 specification
+
+16. RS485 terminal
+    Supports 485 bus communication
+
+17. Digital output
+   5~36V, open-drain output, output load 450mA/channel (MAX)
+
+18. Input signal common terminal
+   Unconnected and suspended: dry contact passive input
+   Connected to the positive pole of the power supply: low level trigger, NPN type wet active input, voltage 5V-36V DC
+   Connected to the negative pole of the power supply: high level trigger, PNP type wet connected active input, voltage 5V-36V DC
+
+19. Digital input
+   5~36V, passive input/active input (NPN type or PNP type)
+
+20. VOUT output voltage
+   Used to set the supply voltage and I/O level of the I2C device, which defaults to 3.3V
+
+21. RTC battery holder
+   Compatible with CR927 battery
+
+ESP32-S3-Touch-LCD-5-details-intro-1.png
+
+22. CS8501
+   Lithium battery recharge manager
+
+23. PCF85063
+   RTC chip for providing accurate time control
+
+24. AP3032KTR-G1
+   Display backlight boost converter
+
+25. CH422G
+   IO expansion chip
+
+26. SP3485
+   RS485 transceiver
+
+27. TJA1051T/3/1J
+   CAN transceiver
+
+28. SGM2212-3.3
+   800mA low-noise LDO
+
+Pinouts
+700px-ESP32-S3-Touch-LCD-5-details-9.png
+
+LCD interface: The interface to connect the LCD cable
+ESP32-S3	LCD
+GPIO0	G3
+GPIO1	R3
+GPIO2	R4
+GPIO3	VSYNC
+GPIO4	TP_IRQ
+GPIO5	DE
+GPIO7	PCLK
+GPIO8	TP_SDA
+GPIO9	TP_SCL
+GPIO10	B7
+GPIO14	B3
+GPIO17	B6
+GPIO18	B5
+GPIO21	G7
+GPIO38	B4
+GPIO39	G2
+GPIO40	R7
+GPIO41	R6
+GPIO42	R5
+GPIO45	G4
+GPIO46	HSYNC
+GPIO47	G6
+GPIO48	G5
+CH422G	LCD
+EXIO1	TP_RST
+EXIO2	DISP
+EXIO3	LCD_RST
+
+
+USB interface: Used for power supply and flashing
+ESP32-S3	USB
+GPIO19	USB_DN
+GPIO20	USB_DP
+
+
+TF card interface: The interface used to connect the TF card
+ESP32-S3	SD
+GPIO11	MOSI
+GPIO12	SCK
+GPIO13	MISO
+CH422G	TF
+EXIO4	SD_CS
+
+
+RS485 interface: The development board is equipped with an RS485 interface, allowing direct connection for device communication, with automatic switching of the circuit's transmit and receive modes
+ESP32-S3	RS485
+GPIO43	RS485_RXD
+GPIO44	RS485_TXD
+
+
+CAN interface: Implement the transmission and reception control, data analysis, acquisition and monitoring of the CAN bus network
+ESP32-S3	CAN
+GPIO15	CANTX
+GPIO16	CANRX
+
+
+Isolated IO interface: Isolated IO is composed of digital output, digital input and input signal common end, and the IO level can reach 5~36V
+CH422G	DI/DO
+EXIO0	DI0
+EXIO5	DI1
+OD0	DO0
+OD1	DO1
+
+
+MX1.25 battery interface: The development board uses a high-efficiency charge/discharge management chip CS8501, which can boost a single lithium battery to 5V, the
+current charging current is 580mA, and the user can change the charging current by replacing the R45 resistor, please refer to ESP32-S3-Touch-LCD-5 Schematic diagram for details
+Dimensions
+Without Touch Version
+ESP32-S3-Touch-LCD-5-details-size-2.png
+
+With Touch Version
+ESP32-S3-Touch-LCD-5-details-size-1.png
+
+Usage Instructions
+ESP32-S3-Touch-LCD-5 currently provides two development tools and frameworks, Arduino IDE and ESP-IDF, providing flexible development options, you can choose the right development tool according to your project needs and personal habits.
+
+Development tools
+180px-Arduino-IDE-logo.jpg	
+Arduino IDE
+Arduino IDE is an open source electronic prototyping platform, convenient and flexible, easy to get started. After a simple learning, you can start to develop quickly. At the same time, Arduino has a large global user community, providing an abundance of open source code, project examples and tutorials, as well as rich library resources, encapsulating complex functions, allowing developers to quickly implement various functions.
+
+180px-ESP-IDF-logo.jpg	
+ESP-IDF
+ESP-IDF, or full name Espressif IDE, is a professional development framework introduced by Espressif Technology for the ESP series chips. It is developed using the C language, including a compiler, debugger, and flashing tools, etc., and can be developed via the command lines or through an integrated development environment (such as Visual Studio Code with the Espressif IDF plugin). The plugin offers features such as code navigation, project management, and debugging.
+
+
+Each of these two development approaches has its own advantages, and developers can choose according to their needs and skill levels. Arduino are suitable for beginners and non-professionals because they are easy to learn and quick to get started. ESP-IDF is a better choice for developers with a professional background or high performance requirements, as it provides more advanced development tools and greater control capabilities for the development of complex projects.
+
+Components preparation
+ESP32-S3-Touch-LCD-5 x1
+TF card x 1
+USB cable (Type-A to Type-C) x 1
+USB TO RS485 Bidirectional Converter x1
+USB to CAN adapter analyzer x1
+900px-ESP32-S3-Touch-LCD-5-usenotes-01.png
+
+Precautions
+Please pay attention to the PCB antenna area when using, and avoid attaching other metals or plastic parts to the PCB antenna
+The TF card uses SPI to communicate, note that the SD_CS pin needs to be driven by the EXIO4 of the CH422G
+The development board uses 3.5mm terminals to lead out peripheral pins such as CAN, I2C, RS485 and isolated IO.
+The CAN and RS485 peripherals do not use a switch to connect the 120 ohm resistor by default, and the ON is optional to turn on the terminal resistor connection.
+The 5inch screen occupies the vast majority of the GPIO, and the development board uses the CH422G chip to expand the IO for resetting, turning off and on the backlight, etc.
+The isolated IO is controlled by CH422G, and you can refer to the IO_Test example for specific use, and you can refer to ESP32-S3-Touch-LCD-5 Demo or CH422G Datasheet for the driving principle
+The development board uses USB to download the demo. If the port cannot be recognized, please enter boot mode (press and hold the boot button, then connect to the computer, and then release the boot button). After downloading the demo, press the RESET button to run the demo.
+Currently, under ESP-IDF v5.3, the average frame rate limit for running the LVGL benchmark demo with a single core is 26 frames per second, corresponding to an interface frame rate of 41 (PCLK 21 MHz). Before compilation, ESP32 and LVGL need to be configured through menuconfig:
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_120M=y [Need to be consistent with PSRAM]
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y and CONFIG_SPIRAM_SPEED_120M=y [Need to be consistent with FLASH]
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+#The following LVGL configuration items are helpful for frame rate improvement (LVGL v8.3):
+#define LV_MEM_CUSTOM 1 or CONFIG_LV_MEM_CUSTOM=y
+#define LV_MEMCPY_MEMSET_STD 1 or CONFIG_LV_MEMCPY_MEMSET_STD=y
+#define LV_ATTRIBUTE_FAST_MEM IRAM_ATTR or CONFIG_LV_ATTRIBUTE_FAST_MEM=y
+For detailed LCD and LVGL performance descriptions, please refer to Documentation
+PH2.0 lithium battery holder only supports a single 3.7V lithium battery, do not use multiple sets of battery packs to connect to charge and discharge at the same time, and it is recommended that the capacity of a single battery is less than 2000mAH
+Please do not use the following slave addresses, because the board itself is already occupied:
+The CH422G and touch of the board occupy the following slave address, please do not use I2C devices with the same address:
+    0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00: -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+10: -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+20: 20 21 22 23 24 25 26 27 -  -  -  -  -  -  -  -
+30: 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f
+40: -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+50: -  51 -  -  -  -  -  -  -  -  -  -  -  -  5d -
+60: -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+70: -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+Before operating, it is recommended to browse the table of contents to quickly understand the document structure. For smooth operation, please read the FAQ carefully to understand possible problems in advance. All resources in the document are provided with hyperlinks for easy download.
+Working with Arduino
+This chapter introduces setting up the Arduino environment, including the Arduino IDE, management of ESP32 boards, installation of related libraries, program compilation and downloading, as well as testing demos. It aims to help users master the development board and facilitate secondary development. Arduino-flow-04.png
+
+Environment setup
+Download and install Arduino IDE
+Click to visit the official website, select the corresponding system and system bit to download. The version of the Arduino IDE needs to be ≥ 1.8, and the path of installation must not be Chinese, otherwise there will be an error when compiling.
+ESP32-S3-AMOLED-1.91-Ar-software-01.png
+Run the installer and install all by default.
+The environment setup is carried out on the Windows 10 system, Linux and Mac users can access Arduino-esp32 environment setup for reference
+Install Arduino-ESP32
+Regarding ESP32-related motherboards used with the Arduino IDE, the esp32 by Espressif Systems library must be installed first.
+It is generally recommended to use online installation. If online installation fails, use offline installation.
+To install the Arduino-ESP32 tutorial, please refer to Arduino board manager tutorial
+The ESP32-S3-Touch-LCD-5 development board comes with an offline package. Click here to download: esp32_package_3.0.2_arduino offline package
+ESP32-S3-Touch-LCD-5 Development board installation instructions
+Board name	Board installation requirements	Version number requirements
+ESP32-S3-Touch-LCD-5	"Install Offline" / "Install Online"	3.0.0 and above
+Install libraries
+When installing Arduino libraries, there are usually two ways to choose from: Install online and Install offline. If the library installation requires offline installation, you must use the provided library file
+For most libraries, users can easily search and install them through the online library manager of the Arduino software. However, some open-source libraries or custom libraries are not synchronized to the Arduino Library Manager, so they cannot be acquired through online searches. In this case, users can only manually install these libraries offline.
+For library installation tutorial, please refer to Arduino library manager tutorial
+ESP32-S3-Touch-LCD-5 library file is stored in the sample program, click here to jump: ESP32-S3-Touch-LCD-5 Demo
+ESP32-S3-Touch-LCD-5 Library file installation instructions
+Library Name	Description	Version	Library Installation Requirements
+ESP32_Display_Panel	ESP32 Microcontroller's specific display panel control library	v0.1.4 and above	"Install Online" or "Install Offline"
+ESP32_IO_Expander	ESP32's I/O expansion library	v0.0.4 or later	"Install Online" or "Install Offline"
+lvgl	LVGL graphical library	v8.4.0	"Install Offline"
+lv_conf.h	LVGL configuration file	——	"Install Offline"
+Run the First Arduino Demo
+If you are just getting started with ESP32 and Arduino, and you don't know how to create, compile, flash, and run Arduino ESP32 programs, then please expand and take a look. Hope it can help you!
+Demos
+Demo-flow-01.png
+
+ESP32-S3-Touch-LCD-5 Demo
+Demo	Basic Description	Dependency Library
+01_I2C_Test	Test I2C seat	-
+02_RS485_Test	Test RS485 seat	-
+03_SD_Test	Test TF card slot	-
+04_RTC_Test	Test RTC clock and RTC interrupt	-
+05_IO_Test	Test isolation IO	ESP32_IO_Expander, ESP32_Display_Panel
+06_TWAItransmit	Test CAN seat	-
+07_TWAIreceive	Test CAN seat	-
+08_DrawColorBar	Test RGB screen	ESP32_Display_Panel
+09_lvgl_Porting	Test RGB touch screen	LVGL, ESP32_Display_Panel
+If the ESP32 version number is 3.0.6 or above, the ESP32-S3-Touch-LCD-5 supports direct model selection. After selecting the model directly, some parameters are set to default and do not need to be modified
+Take ESP32-S3-LCD-1.69 as an example
+ESP32-S3-LCD-1.69-demo-02.png
+
+01_I2C_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+loop():
+loop()The function is the main loop part of the program, and its core function is to scan devices on the I2C bus.
+First, variables were defined to store error codes, device addresses, and to record the number of devices found.
+Then, iterate through possible I2C device addresses from location 0x01 to 0x7f using a loop. For each address, use Wire.beginTransmission(address) to start the transmission to the device at the specific address, and then use Wire.endTransmission() to end the transmission and get the error code.
+If the error code is 0, an I2C device was found at that address, print the device address and increase the count of the number of devices. If the error code is not 2 (indicating that the device is not responding), the error code and the corresponding address are printed.
+Finally, if no I2C devices are found, print the appropriate message and use delay(5000) to pause the program for 5 seconds and scan again.
+
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-8.png
+
+Flash the demo
+Result demonstration
+
+The serial monitor prints the device address on the I2C bus
+ESP32-Arduino-6.png
+
+02_RS485_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB to RS485 converter, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-01.png
+
+Code analysis
+
+setup():
+setup function is primarily used for initializing serial communication
+Use the RS485.begin function to initialize serial port Serial1, set the baud rate, data format, and specify the receive and transmit pins. Then, through a loop, ensure the serial port initialization is successful.
+
+loop() :
+loop function is the main loop part of the program, and its main function is to implement simple 485 communication data return
+By checking whether there is data available at the serial port, if there is data, it reads a byte and sends it back immediately, so that the received 485 data can be sent back intact
+
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-11.png
+Flash the demo
+Result demonstration
+
+Open the serial port debugging assistant to send a message to the ESP32-S3-Touch-LCD-5 device, and the device will return the received message to the serial port debugging assistant
+ESP32-Arduino-32.png
+
+03_SD_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Insert the TF card into the board
+Code analysis
+
+setup()：
+setup function mainly performs a series of initialization operations and tests on the TF card
+First, it initializes serial port communication and sets the baud rate to 115200. Then create a ESP_IOExpander_CH422G object to manage the extended IO pins, initialize and set multiple pins as output modes, and control the status of pins such as touchscreen reset (TP_RST), LCD backlight (LCD_BL), LCD reset (LCD_RST), TF card select (SD_CS), and USB select (USB_SEL).
+Next, use the extended GPIO pins to handle the TF card, initialize SPI communication, and attempt to mount the TF card. If the mount fails, an error message will be output and returned. If the mount is successful, the type of TF card will be detected and output, and information about the size of the TF card will also be output.
+After that, perform a series of tests on file system operations, including listing directory contents, creating directories, deleting directories, writing to files, appending content to files, reading files, deleting files, renaming files, and testing file input and output, and output the total space and used space size of the TF card.
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-8.png
+Flash the demo
+Result demonstration
+
+The ESP32-S3-Touch-LCD-5 can identify the type and size of an TF card, and then perform file operations such as adding, deleting, modifying, and querying.
+ESP32-Arduino-12.png
+
+04_RTC_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+setup():
+setup function first initializes the serial port communication, then initializes the PCF85063A real-time clock module, sets the current time and alarm time, and enables the alarm. It also sets the alarm interrupt pin to a pull-up input mode and attaches an interrupt handling function.
+
+loop():
+loop function continuously reads the current time and prints it. When the alarm triggers (through an interrupt detection), it resets the alarm flag and optionally reactivates the alarm. It then prints the message indicating that the alarm has gone off. Finally, it delays for 1 second to continuously loop and monitor the time and alarm status.
+
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-8.png
+Flash the demo
+Result demonstration
+
+Result demonstration *ESP32-S3-Touch-LCD-5 sets the time, start the alarm, then read the current time, and wait for the alarm to enter
+
+Trigger the alarm clock: The alarm clock goes off
+ESP32-Arduino-13.png
+
+05_IO_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+DO0 is connected to DI0, and DO1 is connected to DI1, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-03.png
+
+Code analysis
+
+waveshare_io_test():
+First, it prints out "Initialize IO expander" to indicate the start of initializing the IO expander. Then create a ESP_IOExpander_CH422G instance to represent the IO extender, initialize it, and start its operation. Then set the OC pin to push-pull output mode and the IO0 - IO7 pins to input mode. At the same time, the initial state of output pins DO0 and DO1 is set high.
+In an infinite loop, alternately set the states of DO0 and DO1. After each setting, you can tell if a certain condition is met by reading the status of the input pins DI0 and DI1, and if the condition is met (i.e., expander->multiDigitalRead(DI0_mask | DI1_mask) is as expected) to increase the value of the variable num. Exit the loop when num reaches 2, otherwise reset num to 3 and try again. The entire process is designed to test the input/output capabilities of the IO extenders and the interaction between them.
+
+Code modification
+
+In waveshare_io_port.h there is a macro definition for selecting the resolution, with a value of 0 for 800x480 and a value of 1 for 1024x600, which can be selected according to the model purchased
+ #define ESP_PANEL_USE_1024_600_LCD           (0)     // 0: 800x480, 1: 1024x600
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-14.png
+Flash the demo
+Result demonstration
+
+Serial port prints the screen refresh rate, and the screen lights up.
+The test passes with a green screen, and the test fails with a red screen
+If the connection is correct and the screen is still red, it might be due to insufficient USB power supply. You could try using a power source with a higher current, such as 5V/1A
+ESP32-Arduino-15.png
+
+06_TWAItransmit
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB-CAN-A, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-02.png
+
+Code analysis
+
+waveshare_twai_transmit():
+waveshare_twai_transmit() function primarily handles the transmission and alarm processing for TWAI (an interface similar to CAN bus)
+First, it checks if any alarms have occurred. Read the triggered alerts by calling twai_read_alerts and obtain the TWAI status information into a twai_status_info_t structure. Then, according to the different alarms triggered, perform corresponding processing. For example, if an error passive alarm, a bus error alarm, a transmission failure alarm, or a transmission success alarm is triggered, print the corresponding message and output some status information such as the bus error count, the number of messages to be sent, the transmission error counter, and the transmission failure counter.
+It then takes the current time (in milliseconds) and checks if it's time to send the message. If the difference between the current time and the last time a message was sent is greater than or equal to the set transmission time interval TRANSMIT_RATE_MS , then update the last send time to the current time and call the send_message function to send a message. send_message function configures and queues a message containing a specific identifier, data length, and data content for transmission. If the queuing is successful, it prints a success message; otherwise, it prints a failure message. After sending, it clears the message data array.
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-8.png
+Flash the demo
+Result demonstration
+
+Serial port print indicates successful CAN message transmission. After configuring USB-CAN-A_TOOL, you can observe the CAN messages sent by the ESP32-S3-Touch-LCD-5 upon startup.
+ESP32-Arduino-20.png ESP32-Arduino-CN-1.png
+
+07_TWAIreceive
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB-CAN-A, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-02.png
+
+Code analysis
+
+waveshare_twai_receive() :
+First, the triggered alarm is read and the status information is obtained, and the corresponding processing is carried out according to different alarm conditions, such as printing error passive, bus error, receiving queue full and other alarm information and related counts.
+When a data alert is triggered, the loop receives messages and calls the handle_rx_message function to process them. This function determines the message format and prints the message identifier and data content (excluding remote transmission requests), effectively handling received messages on the TWAI bus and responding to alerts.
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-8.png
+Flash the demo
+Result demonstration
+
+ESP32-S3-Touch-LCD-5 waits USB-CAN-A_TOOL to send a message. If the message is received successfully, it will be printed to the serial port.
+ESP32-Arduino-CN-2.png ESP32-Arduino-23.png ESP32-Arduino-22.png
+
+08_DrawColorBar
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+waveshare_lcd_init() ：
+First, it prints out "Initialize IO expander" to indicate the start of initializing the IO expander. Then create a ESP_IOExpander_CH422G instance, initialize it, and start its operation. Set IO0 - IO7 pins to output mode, and set the touch screen reset pin (TP_RST) and the LCD reset pin (LCD_RST) to high level while turning off the LCD backlight (LCD_BL) and wait 100 ms.
+Next, print "Create RGB LCD bus", create an RGB panel bus object ESP_PanelBus_RGB, configure its pins, width, height, RGB timing frequency and timing parameters, etc., set the bounce buffer size and display the active low flag, and then start the panel bus operation.
+Then, print "Create LCD device", create an LCD object ESP_PanelLcd, pass in parameters such as panel bus object, number of color bits, and reset pins to initialize, reset, and start the operation. If EXAMPLE_ENABLE_PRINT_LCD_FPS is defined, the callback function ending with VSync is attached to the LCD object.
+Finally, print "Draw color bar from top left to bottom right, the order is B - G - R", call the colorBarTest function to draw the color bar on the LCD, and turn on the LCD backlight.
+Code modification
+
+In waveshare_lcd_port.h there is a macro definition for selecting the resolution, with a value of 0 for 800x480 and a value of 1 for 1024x600, which can be selected according to the model purchased
+ #define ESP_PANEL_USE_1024_600_LCD           (0)     // 0: 800x480, 1: 1024x600
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-14.png
+Flash the demo
+Result demonstration
+
+Serial port prints log, and the screen lights up
+ESP32-Arduino-24.png 800px-ESP32-Arduino-25.png
+
+
+
+09_lvgl_Porting
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+setup():
+Initialize serial communication at a baud rate of 115200. Next, create and initialize the IO expander, set the pin mode and state, and initialize the GT911 touch screen. Then create and initialize the panel device, configure the RGB bus as needed. After that, initialize LVGL, create a simple label or an example or demo function that optionally calls LVGL, and release the mutex lock at the end
+
+loop() :
+Only prints "IDLE loop" and waits for 1 second without any other substantial action. The overall goal is to build an LVGL-based user interface environment.
+
+Code modification
+
+There are two macro definitions in ESP_Panel_Board_Custom.h, which are used to select resolution and whether to enable touch:
+For ESP_PANEL_USE_1024_600_LCD, the value of 0 corresponds to 800x480, and the value of 1 corresponds to 1024x600, which can be selected according to the model purchased.
+For ESP_OPEN_TOUCH, the value of 0 corresponds to Touch Off, and the value of 1 corresponds to Touch On.
+ #define ESP_PANEL_USE_1024_600_LCD           (0)     // 0: 800x480, 1: 1024x600
+ #define ESP_OPEN_TOUCH 0 // 1 initiates the touch, 0 closes the touch.
+Demo flashing
+
+Select the development board ESP32S3 Dev Module and port
+Set development board parameters
+ESP32-Arduino-14.png
+Flash the demo
+Result demonstration
+
+Serial port prints the screen refresh rate, and the screen lights up
+ESP32-Arduino-26.png
+The screen lights up video
+
+Other instructions
+
+Screen drifting occurs during use, please refer to ESP official FAQ
+When using your own UI program, there is a lack of memory, you can click Tools to select a larger partition table
+800px-ESP32-Arduino-28.png
+The version of lvgl used is 8.4, and you can query and use the LVGL API through the following documentation
+LVGL documentation
+Working with ESP-IDF
+This chapter introduces setting up the ESP-IDF environment setup, including the installation of Visual Studio and the Espressif IDF plugin, program compilation, downloading, and testing of example programs, to assist users in mastering the development board and facilitating secondary development. ESP-IDF-flow-01.png
+
+Environment setup
+Download and install Visual Studio
+Open the download page of VScode official website, choose the corresponding system and system bit to download
+ESP32-S3-AMOLED-1.91-VScode-01.png
+After running the installation package, the rest can be installed by default, but here for the subsequent experience, it is recommended to check boxes 1, 2, and 3
+ESP32-S3-AMOLED-1.91-VScode-02.png
+After the first two items are enabled, you can open VSCode directly by right-clicking files or directories, which can improve the subsequent user experience.
+After the third item is enabled, you can select VSCode directly when you choose how to open it.
+The environment setup is carried out on the Windows 10 system, Linux and Mac users can access ESP-IDF environment setup for reference
+Install Espressif IDF Plugin
+It is generally recommended to use Install Online. If online installation fails due to network factor, use Install Offline.
+For more information about how to install the Espressif IDF plugin, see Install Espressif IDF Plugin
+Run the First ESP-IDF Demo
+If you are just getting started with ESP32 and ESP-IDF, and you don't know how to create, compile, flash, and run ESP-IDF ESP32 programs, then please expand and take a look. Hope it can help you!
+New Project
+ESP32-S3-AMOLED-1.91-study-01.png
+
+ESP32-S3-AMOLED-1.91-study-02.png
+
+Create Demo
+Using the shortcut F1, enter esp-idf:show examples projects
+ESP32-S3-AMOLED-1.91-study-03.png
+
+Select your current IDF version
+ESP32-S3-AMOLED-1.91-study-04.png
+
+Take the Hello world demo as an example
+①Select the corresponding demo
+②Its readme will state what chip the demo applies to (how to use the demo and the file structure are described below, omitted here)
+③Click to create the demo
+ESP32-S3-AMOLED-1.91-study-05.png
+
+Select the path to save the demo, and require that the demos cannot use folders with the same name
+ESP32-S3-AMOLED-1.91-study-06.png
+
+Modify COM Port
+The corresponding COM ports are shown here, click to modify them
+Please select the COM ports according to your device (You can view it from the device manager)
+In case of a download failure, please press the Reset button for more than 1 second or enter download mode, and wait for the PC to recognize the device again before downloading once more
+ESP32-S3-AMOLED-1.91-study-07.png
+
+Modify Driver Object
+Select the object we need to drive, which is our main chip ESP32S3
+ESP32-S3-AMOLED-1.91-study-08.png
+
+Choose the openocd path, it doesn't affect us here, so let's just choose one
+ESP32-S3-AMOLED-1.91-study-09.png
+
+Other Status Bar Functions
+①.ESP-IDF Development Environment Version Manager, when our project requires differentiation of development environment versions, it can be managed by installing different versions of ESP-IDF. When the project uses a specific version, it can be switched to by utilizing it
+②.Device flashing COM port, select to flash the compiled program into the chip
+③.Select set-target chip model, select the corresponding chip model, for example, ESP32-P4-NANO needs to choose esp32p4 as the target chip
+④.menuconfig, click it to Modify sdkconfig configuration file Project configuration details
+⑤.fullclean button, when the project compilation error or other operations pollute the compiled content, you can clean up all the compiled content by clicking it
+⑥.Build project, when a project satisfies the build, click this button to compile
+⑦.Current download mode, the default is UART
+⑧.flash button, when a project build is completed, select the COM port of the corresponding development board, and click this button to flash the compiled firmware to the chip
+⑨.monitor enable flashing port monitoring, when a project passes through Build --> Flash, click this button to view the log of output from flashing port and debugging port, so as to observe whether the application works normally
+⑩.Debug
+⑪.Build Flash Monitor one-click button, which is used to continuously execute Build --> Flash --> Monitor, often referred to as "little flame"
+
+ESP32-S3-AMOLED-1.91-study-10.png
+
+Compile, Flash and Serial Port Monitor
+Click on the all-in-one button we described before to compile, flash and open the serial port monitor
+ESP32-S3-AMOLED-1.91-study-11.png
+
+It may take a long time to compile especially for the first time
+ESP32-S3-AMOLED-1.91-study-12.png
+
+During this process, the ESP-IDF may take up a lot of CPU resources, so it may cause the system to lag
+If it is the first time to flash the program for a new project, you will need to select the download method, and select UART
+ESP32-S3-AMOLED-1.91-study-13.png
+
+This can also be changed later in the Download methods section (click on it to pop up the options)
+ESP32-S3-AMOLED-1.91-study-14.png
+
+As it comes with the onboard automatic download circuit, it can be downloaded automatically without manual operation
+After successful download, it will automatically enter the serial monitor, you can see the chip output the corresponding information and be prompted to restart after 10S
+ESP32-S3-AMOLED-1.91-study-15.png
+
+Use the IDF Demos
+The following takes ESP32-S3-LCD-1.47-Demo as an example to introduce the two opening methods of the project and the general steps of use, and the detailed explanation of the ESP-IDF project. If you use other projects, the operation steps can be applied similarly.
+Open In the Software
+Open VScode software and select the folder to open the demo
+ESP32-S3-AMOLED-1.91-study-16.png
+
+Select the provided ESP-IDF example and click to select the file (located in the /Demo/ESP-IDF path under demo)
+ESP32-S3-AMOLED-1.91-study-17.png
+
+Open from Outside the Software
+Select the project directory correctly and open the project, otherwise it will affect the compilation and flashing of subsequent programs
+ESP32-S3-AMOLED-1.91-study-18.png
+
+After connecting the device, select the COM port and model, click below to compile and flash to achieve program control
+ESP32-S3-AMOLED-1.91-study-19.png
+
+ESP-IDF Project Details
+Component: The components in ESP-IDF are the basic modules for building applications, each component is usually a relatively independent code base or library, which can implement specific functions or services, and can be reused by applications or other components, similar to the definition of libraries in Python development.
+Component reference: The import of libraries in the Python development environment only requires to "import library name or path", while ESP-IDF is based on the C language, and the importing of libraries is configured and defined through CMakeLists.txt.
+The purpose of CmakeLists.txt: When compiling ESP-IDF, the build tool CMake first reads the content of the top-level CMakeLists.txt in the project directory to read the build rules and identify the content to be compiled. When the required components and demos are imported into the CMakeLists.txt, the compilation tool CMake will import each content that needs to be compiled according to the index. The compilation process is as follows:
+ESP32-P4 VSCode ESP-IDF GettingStart 240906 02.png
+
+Demos
+Demo-flow-01.png
+
+ESP32-S3-Touch-LCD-5 Demo
+Demo	Basic Description
+01_I2C_Test	Test I2C seat
+02_RS485_Test	Test RS485 seat
+03_SD_Test	Test TF card slot
+04_RTC_Test	Test RTC clock and RTC interrupt
+05_IO_Test	Test isolation IO
+06_TWAItransmit	Test CAN seat
+07_TWAIreceive	Test CAN seat
+08_lvgl_Porting	Test RGB touch screen
+Dependent libraries are automatically downloaded at compile time via IDF component.yml
+Refer to IDF Component Manager for more learning links
+01_I2C_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+app_main():
+Firstly, constants and variables related to I2C are defined, such as log tags, the SDA and SCL pins for I2C, and port numbers.
+Next, install the console REPL environment for user interaction based on different configuration options. Then configure the I2C bus, including the clock source, ports, pins, and enable internal pull-up resistors, and initialize the I2C master bus.
+A series of I2C utility commands are then registered, such as commands for device detection, register reads and writes, and so on. Instructions for use are also printed to instruct the user on how to use these commands.
+Finally, start the console REPL, which allows users to interact with the application through the command line and perform various I2C operations, providing users with a convenient way to operate the I2C bus through the command line.
+Result demonstration
+
+After the flashing is successful, open the serial terminal, enter the command, and press enter to run:
+800px-ESP32-IDF-14.png
+
+The steps are as follows:
+Use "help" to check all supported commands
+Use "i2cconfig" to configure your I2C bus
+Use "i2cdetect" to scan the devices on the bus
+Use "i2cget" to retrieve the content of a specific register
+Use "i2cset" to set the value of a specific register
+Use "i2cdump" to dump all registers (experiment)
+02_RS485_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB to RS485 converter, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-01.png
+
+Code analysis
+
+echo_task():
+Firstly, UART parameters were configured, including baud rate, data bits, parity bits, stop bits, and hardware flow control, etc.
+Then install the UART driver, set the UART pins, and allocate a temporary buffer for receiving data.
+In an infinite loop, data is read from the UART, the read data is written back to the UART, and log information is recorded when data is received.
+Result demonstration
+
+Open the serial port debugging assistant to send a message to the ESP32-S3-Touch-LCD-5 device, and the device will return the received message to the serial port debugging assistant
+ESP32-Arduino-32.png
+
+03_SD_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+waveshare_sd_card_init():
+This function is mainly used to initialize the TF card. First initialize I2C, pull down the CS pin of the TF card through I2C control chip. Next, configure the TF card mounting options, including whether to format when mounting fails, the maximum number of files, and the allocation unit size, etc. After that, initialize the SPI bus and mount the TF card file system using the configured SPI bus and mount options. If mounting is successful, return ESP_OK, indicating that the TYF card initialization is complete.
+
+waveshare_sd_card_test():
+This function is used to test the functionality of the TF card. First print the information of the initialized TF card. Then create a file, write data into it, rename the file, and read the content of the renamed file. Next, format the file system and check if the file has been deleted after formatting. Finally, create a new file and read its content, unmount the TF card and free up SPI bus resources when the test is complete.
+
+Result demonstration
+
+After successful programming, the serial port will print information about the storage card, such as its name, type, capacity, and maximum supported frequency. Then, it will create a file, write to the file, rename the file, and read the renamed file:
+ESP32-IDF-18.png
+
+04_RTC_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+app_main() ：
+First define the structure used to store the current time and some variables, including the alarm clock interrupt flag, etc.
+Next, initialize the chip, set the initial time and alarm time, enable the alarm function, and initialize the interrupt input pin and interrupt handler. In an infinite loop, read the current time, convert it to a string, and print it. When a clock interrupt occurs, reset the interrupt flag and optionally re-enable the alarm. Also print a message indicating that the alarm has gone off. There is a 1-second delay within the loop.
+In general, a simple alarm clock function is implemented, and the time reading and alarm response are realized through the operation and interrupt processing of the PCF85063A chip.
+Result demonstration
+
+After the flashing is successful, the time will be set, the alarm will be started, and then the current time will be read and wait to enter the alarm clock
+The serial port terminal will print relevant information
+800px-ESP32-IDF-17.png
+
+05_IO_Test
+Hardware connection
+
+Connect the board to the computer using a USB cable
+DO0 is connected to DI0, and DO1 is connected to DI1, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-03.png
+
+Code analysis
+
+app_main():
+Firstly, define some variables for IO testing and flags.
+In a loop, perform IO testing on the CH422G chip, by sending different values to the chip's GPIO, then reading the states of two specific IO pins, and determining if they match the expected outcomes. If both tests are successful, it indicates that the DI (input) and DO (output) are functioning properly. Output relevant information and reset the flag variable, then exit the loop; if the number of failed tests reaches three, output a failure message and exit the loop.
+Initialize the LCD and get the display object
+Call the function to run a custom LVGL UI demo
+Enter an infinite loop, within which the lv_timer_handler is continuously called to handle LVGL tasks, and a 10 millisecond delay is implemented to prevent CPU overload.
+Code modification
+
+In LCD.h there is a macro definition for selecting the resolution, with a value of 0 for 800x480 and a value of 1 for 1024x600, which can be selected according to the model purchased
+ #define ESP_PANEL_USE_1024_600_LCD           (0)     // 0: 800x480, 1: 1024x600
+Result demonstration
+
+The test passes with a green screen, and the test fails with a red screen, the serial port assistant will also display the corresponding log:
+800px-ESP32-IDF-16.png
+
+If the connection is correct and the screen is still red, it might be due to insufficient USB power supply. You could try using a power source with a higher current, such as 5V/1A
+06_TWAItransmit
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB-CAN-A, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-02.png
+
+Code analysis
+
+waveshare_twai_transmit():
+If the driver is not installed, it will return to the failed state after waiting for a period of time
+Read triggered alerts and get TWAI status information
+Print the corresponding log information according to different alarm types, including passive error alarms, bus error alarms, transmission failure alarms, and transmission success alarms, and print relevant status information
+Determine whether it is time to send a message, if so, send a message and update the last time it was sent
+Result demonstration
+
+Serial port print indicates successful CAN message transmission. After configuring USB-CAN-A_TOOL, you can observe the CAN messages sent by the ESP32-S3-Touch-LCD-5 upon startup
+ESP32-IDF-20.png
+
+Observe USB-CAN-A_TOOL further, and you will see the CAN messages sent by ESP32-S3-Touch-LCD-5
+ESP32-Arduino-CN-1.png
+
+07_TWAIreceive
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Connect the development board to USB-CAN-A, as shown in the figure
+600px-ESP32-S3-Touch-LCD-5-demo-02.png
+
+Code analysis
+
+waveshare_twai_receive():
+If the driver is not installed, it will return to the failed state after waiting for a period of time
+Read triggered alerts and get TWAI status information
+Print corresponding log information based on different alarm types triggered, including error passive alarms, bus error alarms, and receive queue overflow alarms, and print related status information
+If a received data alert is triggered, the messages are received in a loop and the handle_rx_message function is called to process each received message. Finally, the success status is returned
+Result demonstration
+
+ESP32-S3-Touch-LCD-5 waits USB-CAN-A_TOOL to send a message. If the message is received successfully, it will be printed to the serial port
+ESP32-Arduino-CN-2.png ESP32-Arduino-23.png ESP32-IDF-21.png
+
+If the following error occurs, click on the serial monitor and use the debugging tool to resend the data. (If you press Reset, sometimes you need to click the serial monitor again):
+ESP32-IDF-22.png
+
+08_lvgl_Porting
+Hardware connection
+
+Connect the board to the computer using a USB cable
+Code analysis
+
+app_main():
+Initialize the Waveshare ESP32-S3 RGB LCD, and then you can choose to turn the screen backlight on or off.
+Then print a message indicating that you want to display the demonstration content of LVGL. Since the LVGL API is not thread-safe, the mutex is locked first.
+You can then choose to run different LVGL demos such as lv_demo_stress, lv_demo_benchmark, lv_demo_music, lv_demo_widgets, or example_lvgl_demo_ui etc.
+Finally release the mutual exclusion lock.
+Code modification
+
+There are two macro definitions in lvgl_port.h, which are used to select resolution and whether to enable touch:
+For ESP_PANEL_USE_1024_600_LCD, the value of 0 corresponds to 800x480, and the value of 1 corresponds to 1024x600, which can be selected according to the model purchased.
+For CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911, the value of 0 corresponds to Touch Off, and the value of 1 corresponds to Touch On.
+ #define ESP_PANEL_USE_1024_600_LCD           (0)     // 0: 800x480, 1: 1024x600
+ #define CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911 1 // 1 initiates the touch, 0 closes the touch.
+Result demonstration
+
+After successful flashing, press the reset button to run the demo
+The screen lights up video
+
+If you want to further increase the frame rate, you can refer to this link for configuration.
+For RGB LCD drivers, you can refer to this link
+For GT911 drivers, you can refer to this link
+The version of lvgl used is 8.3, and you can query and use the LVGL API through the following documentation
+LVGL documentation
+Flash Firmware Flashing and Erasing
+The current demo provides test firmware, which can be used to test whether the onboard device functions properly by directly flashing the test firmware
+The .bin file is under the build folder at the same level as the demo
+Flash firmware flashing and erasing for reference
+Resources
+Schematic diagram
+ESP32-S3-Touch-LCD-5 Schematic diagram
+Project diagram
+ESP32-S3-Touch-LCD-5 Project diagram
+
+Demo
+ESP32-S3-Touch-LCD-5 Demo
+Datasheets
+ESP32-S3
+ESP32-S3 Datasheet
+ESP32-S3 Technical reference manual
+ESP32-S3-WROOM-1 Datasheet
+Other components
+ST7262 Datasheet
+CH343 Datasheet
+TJA1051 Datasheet
+CH422G Datasheet
+Software tools
+Arduino
+Arduino IDE Official download link
+VScode
+VScode official website
+Debugging tool
+SSCOM Serial port and network debugging assistant
+USB-CAN-A_TOOL
+Firmware flashing tool
+ESP32 firmware flashing tool
+Other resource link
+ESP32-Arduino official documentation
+ESP32-Arduino official resources
+ESP-IDF official resources
+LVGL official documentation
+FAQ
+Question: Why did ESP32-S3-Touch-LCD-5 CAN reception fail?
+ Answer:
+①Restart the COM port in the UCANV2.0.exe and press the ESP32-S3-Touch-LCD-5 reset button several times
+②Remove the check for "DTR" on the serial port debugging assistant
+
+
+
+
+Question: ESP32-S3-Touch-LCD-5 shows no response after uploading an Arduino demo for RGB screen displaying?
+ Answer:
+If there's no screen response after programming the code, check whether the correct configurations are set in Arduino IDE -> Tools, select the corresponding Flash (16MB) and enable PSRAM (8MB OPI))
+
+
+
+
+Question: ESP32-S3-Touch-LCD-5 fails to compile an Arduino demo for the RGB screen and shows errors?
+ Answer:
+To check if the library is installed, refer to library installation procedure
+
+
+
+
+Question: Why are all libraries installed, and the flashing LVGL program reports an error missing lv_cong.h?
+ Answer:
+The path to install the library contains Chinese characters, resulting in the inability to find the library file
+
+
+
+
+Question: Why does the screen not display after successful flashing with Arduino?
+ Answer:
+You can refer to the following steps to run the demo for comparison:
+
+Before running the program, refer to Arduino library manager tutorial for library installation
+To install library, please refer to video reference
+Run and flash ESP32-S3-Touch-LCD-5 Demo
+
+
+
+Question: Why does error "fatal error:esp_ memory_ utils.h:No such file or directory" occur when compiling demos using the Arduino IDE?
+ Answer:
+Please install Arduino esp32 version ≥v3.0.2, this can solve the issue
+
+
+
+
+Question:Can CAN communication use debugging tools to send continuous frames?
+ Answer:
+Yes, you can also customize the frequency of consecutive frames. When the frequency is too high and the computer freezes, it may cause bus errors
+
+
+
+
+Question: What should I do if ESP-IDF flashing fails?
+ Answer:
+You can set the board to download mode to solve this issue. Power off completely, press and hold the Boot button and power it on again, then release it, enter the download mode, re-flash the program, reset and run.
+Please try to press the fullclean button in the status bar and recompile the flashing, this function is to clean up all the compiled content by clicking when the project compilation error or other operations pollute the compiled content
+
+
+
+Question: What should I do if I can't find the AppData folder?
+ Answer:
+Some AppData folders are hidden by default and can be set to show
+
+English system: Explorer->View->Check "Hidden items"
+Chinese system: File Explorer -> View -> Display -> Check "Hidden Items"
+
+
+
+Question: How to check the COM port?
+ Answer:
+Press the Windows + R keys to open the "Run" dialog box, input devmgmt.msc and press Enter to open the Device Manager; Expand the "Port (COM and LPT)" section, here it will list all the COM ports and their current status.
+
+
+
+
+Question: How to deal with the first compilation of the program being extremely slow?
+ Answer:
+It's normal for the first compilation to be slow, just be patient
+
+
+
+
+Question: How to solve the problem that the program is flashed successfully but there is no display on LCD?
+ Answer:
+If there is a reset button on the development board, press the reset button; if there is no reset button, please power it on again
+
+
+
+
+Question: Why does the program flashing fail when using a MAC device?
+ Answer:
+Install MAC Driver and flash again.
+
+
+
+
+Question: How to use SquareLine Studio to design interfaces?
+ Answer:
+Please refer to SquareLine Studio tutorial
+
+
+
+Support
+
+
+
+Technical Support
+
+If you need technical support or have any feedback/review, please click the Submit Now button to submit a ticket, Our support team will check and reply to you within 1 to 2 working days. Please be patient as we make every effort to help you to resolve the issue.
+Working Time: 9 AM - 6 PM GMT+8 (Monday to Friday)
+
+Submit Now
+
+
+
+
+Overview
+Introduction
+Features
+Version Options
+Onboard Resources
+Pinouts
+Dimensions
+Without Touch Version
+With Touch Version
+Usage Instructions
+Development tools
+Arduino IDE
+ESP-IDF
+Components preparation
+Precautions
+Working with Arduino
+Environment setup
+Download and install Arduino IDE
+Install Arduino-ESP32
+Install libraries
+Run the First Arduino Demo
+New Project
+Compile and Flash Demos
+Demos
+01_I2C_Test
+02_RS485_Test
+03_SD_Test
+04_RTC_Test
+05_IO_Test
+06_TWAItransmit
+07_TWAIreceive
+08_DrawColorBar
+09_lvgl_Porting
+Working with ESP-IDF
+Environment setup
+Download and install Visual Studio
+Install Espressif IDF Plugin
+Run the First ESP-IDF Demo
+New Project
+Create Demo
+Modify COM Port
+Modify Driver Object
+Other Status Bar Functions
+Compile, Flash and Serial Port Monitor
+Use the IDF Demos
+Open In the Software
+Open from Outside the Software
+ESP-IDF Project Details
+Demos
+01_I2C_Test
+02_RS485_Test
+03_SD_Test
+04_RTC_Test
+05_IO_Test
+06_TWAItransmit
+07_TWAIreceive
+08_lvgl_Porting
+Flash Firmware Flashing and Erasing
+Resources
+Schematic diagram
+Project diagram
+Demo
+Datasheets
+ESP32-S3
+Other components
+Software tools
+Arduino
+VScode
+Debugging tool
+Firmware flashing tool
+Other resource link
+FAQ
+Support
+To Top
+Login / Create Account
