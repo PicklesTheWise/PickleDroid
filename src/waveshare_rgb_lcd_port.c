@@ -15,38 +15,35 @@ IRAM_ATTR static bool rgb_lcd_on_vsync_event(esp_lcd_panel_handle_t panel, const
 
 /**
  * @brief I2C master initialization - used for CH422G and touch controller
- * Now checks if I2C is already initialized to avoid driver conflicts
  */
 esp_err_t i2c_master_init(void)
 {
-    // Check if I2C driver is already installed by testing the driver install
-    // If it fails with ESP_ERR_INVALID_STATE, the driver is already installed
-    esp_err_t test_result = i2c_driver_install(I2C_MASTER_NUM, I2C_MODE_MASTER, 0, 0, 0);
+    i2c_config_t i2c_conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = I2C_MASTER_SDA_IO,
+        .scl_io_num = I2C_MASTER_SCL_IO,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master.clk_speed = I2C_MASTER_FREQ_HZ,
+    };
     
-    if (test_result == ESP_ERR_INVALID_STATE) {
-        // I2C driver already installed
-        ESP_LOGI(RGB_PORT_TAG, "I2C driver already installed and working");
-        return ESP_OK;
-    } else if (test_result == ESP_OK) {
-        // Driver was just installed, need to configure parameters
-        ESP_LOGI(RGB_PORT_TAG, "I2C driver installed successfully");
-        
-        i2c_config_t i2c_conf = {
-            .mode = I2C_MODE_MASTER,
-            .sda_io_num = I2C_MASTER_SDA_IO,
-            .scl_io_num = I2C_MASTER_SCL_IO,
-            .sda_pullup_en = GPIO_PULLUP_ENABLE,
-            .scl_pullup_en = GPIO_PULLUP_ENABLE,
-            .master.clk_speed = I2C_MASTER_FREQ_HZ,
-        };
-        
-        // Configure I2C parameters
-        return i2c_param_config(I2C_MASTER_NUM, &i2c_conf);
-    } else {
-        // Some other error occurred
-        ESP_LOGE(RGB_PORT_TAG, "I2C driver install failed with error: %s", esp_err_to_name(test_result));
-        return test_result;
+    esp_err_t ret = i2c_param_config(I2C_MASTER_NUM, &i2c_conf);
+    if (ret != ESP_OK) {
+        ESP_LOGE(RGB_PORT_TAG, "I2C param config failed: %s", esp_err_to_name(ret));
+        return ret;
     }
+    
+    ret = i2c_driver_install(I2C_MASTER_NUM, i2c_conf.mode, 0, 0, 0);
+    if (ret == ESP_ERR_INVALID_STATE) {
+        ESP_LOGI(RGB_PORT_TAG, "I2C driver already installed");
+        return ESP_OK;
+    } else if (ret != ESP_OK) {
+        ESP_LOGE(RGB_PORT_TAG, "I2C driver install failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ESP_LOGI(RGB_PORT_TAG, "I2C master initialized successfully");
+    return ESP_OK;
 }
 
 #if CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
@@ -159,10 +156,11 @@ esp_err_t waveshare_esp32_s3_rgb_lcd_init()
 
     esp_lcd_touch_handle_t tp_handle = NULL; // Declare a handle for the touch panel
 
-    // I2C is already initialized in main.c - no need to initialize again
-    ESP_LOGI(RGB_PORT_TAG, "Using pre-initialized I2C bus for CH422G and touch");              
+    // Initialize I2C bus first for CH422G communication
+    ESP_LOGI(RGB_PORT_TAG, "Initializing I2C bus for CH422G and touch");              
+    ESP_ERROR_CHECK(i2c_master_init());
 
-    // Perform LCD hardware reset via CH422G before starting LVGL
+    // Perform LCD hardware reset via CH422G after I2C is ready
     ESP_LOGI(RGB_PORT_TAG, "Performing LCD hardware reset");
     ESP_ERROR_CHECK(waveshare_rgb_lcd_reset()); 
 
