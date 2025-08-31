@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 #define ESP_PANEL_USE_1024_600_LCD           (1)     // 0: 800x480, 1: 1024x600
-#define CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911 0 // Temporarily disable GT911 until component added
+#define CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911 0 // Disabled for debugging - using manual I2C
 
 // Fallback defaults for PlatformIO (no Kconfig)
 #ifndef CONFIG_EXAMPLE_LVGL_PORT_TICK

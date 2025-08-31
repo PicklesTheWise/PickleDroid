@@ -5,6 +5,7 @@
  */
 
 #include "waveshare_rgb_lcd_port.h"
+#include "rom/ets_sys.h"  // For ets_delay_us() function
 
 // VSYNC event callback function
 IRAM_ATTR static bool rgb_lcd_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *edata, void *user_ctx)
@@ -14,25 +15,38 @@ IRAM_ATTR static bool rgb_lcd_on_vsync_event(esp_lcd_panel_handle_t panel, const
 
 /**
  * @brief I2C master initialization - used for CH422G and touch controller
+ * Now checks if I2C is already initialized to avoid driver conflicts
  */
 esp_err_t i2c_master_init(void)
 {
-    int i2c_master_port = I2C_MASTER_NUM;
-
-    i2c_config_t i2c_conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = I2C_MASTER_SDA_IO,
-        .scl_io_num = I2C_MASTER_SCL_IO,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = I2C_MASTER_FREQ_HZ,
-    };
-
-    // Configure I2C parameters
-    i2c_param_config(i2c_master_port, &i2c_conf);
-
-    // Install I2C driver
-    return i2c_driver_install(i2c_master_port, i2c_conf.mode, 0, 0, 0);
+    // Check if I2C driver is already installed by testing the driver install
+    // If it fails with ESP_ERR_INVALID_STATE, the driver is already installed
+    esp_err_t test_result = i2c_driver_install(I2C_MASTER_NUM, I2C_MODE_MASTER, 0, 0, 0);
+    
+    if (test_result == ESP_ERR_INVALID_STATE) {
+        // I2C driver already installed
+        ESP_LOGI(RGB_PORT_TAG, "I2C driver already installed and working");
+        return ESP_OK;
+    } else if (test_result == ESP_OK) {
+        // Driver was just installed, need to configure parameters
+        ESP_LOGI(RGB_PORT_TAG, "I2C driver installed successfully");
+        
+        i2c_config_t i2c_conf = {
+            .mode = I2C_MODE_MASTER,
+            .sda_io_num = I2C_MASTER_SDA_IO,
+            .scl_io_num = I2C_MASTER_SCL_IO,
+            .sda_pullup_en = GPIO_PULLUP_ENABLE,
+            .scl_pullup_en = GPIO_PULLUP_ENABLE,
+            .master.clk_speed = I2C_MASTER_FREQ_HZ,
+        };
+        
+        // Configure I2C parameters
+        return i2c_param_config(I2C_MASTER_NUM, &i2c_conf);
+    } else {
+        // Some other error occurred
+        ESP_LOGE(RGB_PORT_TAG, "I2C driver install failed with error: %s", esp_err_to_name(test_result));
+        return test_result;
+    }
 }
 
 #if CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
@@ -60,12 +74,12 @@ void waveshare_esp32_s3_touch_reset()
     // Reset the touch screen. It is recommended to reset the touch screen before using it.
     write_buf = 0x2C;
     i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-    esp_rom_delay_us(100 * 1000);
+    ets_delay_us(100 * 1000);
     gpio_set_level(GPIO_INPUT_IO_4, 0);
-    esp_rom_delay_us(100 * 1000);
+    ets_delay_us(100 * 1000);
     write_buf = 0x2E;
     i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-    esp_rom_delay_us(200 * 1000);
+    ets_delay_us(200 * 1000);
 }
 
 #endif
@@ -145,9 +159,8 @@ esp_err_t waveshare_esp32_s3_rgb_lcd_init()
 
     esp_lcd_touch_handle_t tp_handle = NULL; // Declare a handle for the touch panel
 
-    // Initialize I2C for CH422G (needed for LCD reset and backlight control)
-    ESP_LOGI(RGB_PORT_TAG, "Initialize I2C bus for CH422G");   
-    ESP_ERROR_CHECK(i2c_master_init());                     
+    // I2C is already initialized in main.c - no need to initialize again
+    ESP_LOGI(RGB_PORT_TAG, "Using pre-initialized I2C bus for CH422G and touch");              
 
     // Perform LCD hardware reset via CH422G before starting LVGL
     ESP_LOGI(RGB_PORT_TAG, "Performing LCD hardware reset");
@@ -215,17 +228,17 @@ esp_err_t waveshare_rgb_lcd_reset()
         // Pull LCD_RST low to reset the LCD (IO3 = 0x08, without it = reset active)
         write_buf = 0x16; // Base value without LCD_RST bit
         i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-        esp_rom_delay_us(500 * 1000); // Hold reset for 500ms (longer than before)
+        ets_delay_us(500 * 1000); // Hold reset for 500ms (longer than before)
 
         // Pull LCD_RST high to complete reset sequence
         write_buf = 0x1E; // Base value with LCD_RST bit (0x16 + 0x08)
         i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-        esp_rom_delay_us(300 * 1000); // Wait 300ms between cycles
+        ets_delay_us(300 * 1000); // Wait 300ms between cycles
     }
     
     // Final stabilization delay
     ESP_LOGI(RGB_PORT_TAG, "LCD reset complete, stabilizing...");
-    esp_rom_delay_us(1000 * 1000); // Wait 1 second for full stabilization
+    ets_delay_us(1000 * 1000); // Wait 1 second for full stabilization
 
     return ESP_OK;
 }

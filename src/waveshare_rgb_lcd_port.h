@@ -68,8 +68,8 @@
 #define EXAMPLE_LCD_BK_LIGHT_ON_LEVEL   (1)
 #define EXAMPLE_LCD_BK_LIGHT_OFF_LEVEL  !EXAMPLE_LCD_BK_LIGHT_ON_LEVEL
 
-#define EXAMPLE_PIN_NUM_TOUCH_RST       (-1)            // -1 if not used
-#define EXAMPLE_PIN_NUM_TOUCH_INT       (-1)            // -1 if not used
+#define EXAMPLE_PIN_NUM_TOUCH_RST       (-1)            // -1 if not used (CH422G handles via TP_RST)
+#define EXAMPLE_PIN_NUM_TOUCH_INT       (4)             // GT911 interrupt pin
 
 static const char *RGB_PORT_TAG = "rgb_port";
 
