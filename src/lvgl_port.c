@@ -432,14 +432,25 @@ static lv_disp_t *display_init(esp_lcd_panel_handle_t panel_handle)
 #if CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
 static void touchpad_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 {
-    esp_lcd_touch_handle_t tp = (esp_lcd_touch_handle_t)indev_drv->user_data; // Get touchpad handle from user data
-    assert(tp);
-    uint16_t touchpad_x, touchpad_y; uint8_t touchpad_cnt = 0;
-    esp_lcd_touch_read_data(tp);
-    bool touchpad_pressed = esp_lcd_touch_get_coordinates(tp, &touchpad_x, &touchpad_y, NULL, &touchpad_cnt, 1);
-    if (touchpad_pressed && touchpad_cnt > 0) {
-        data->point.x = touchpad_x; data->point.y = touchpad_y; data->state = LV_INDEV_STATE_PRESSED;
-    } else { data->state = LV_INDEV_STATE_RELEASED; }
+    if (tp_handle) {
+        uint16_t touchpad_x;
+        uint16_t touchpad_y;
+        uint8_t touchpad_cnt = 0;
+
+        esp_lcd_touch_read_data(tp_handle);
+        bool touchpad_pressed = esp_lcd_touch_get_coordinates(tp_handle, &touchpad_x, &touchpad_y, NULL, &touchpad_cnt, 1);
+
+        if (touchpad_pressed && touchpad_cnt > 0) {
+            data->point.x = touchpad_x;
+            data->point.y = touchpad_y;
+            data->state = LV_INDEV_STATE_PRESSED;
+            ESP_LOGD(TAG, "Touch position: %d,%d", touchpad_x, touchpad_y);
+        } else {
+            data->state = LV_INDEV_STATE_RELEASED;
+        }
+    } else {
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
 }
 #endif
 

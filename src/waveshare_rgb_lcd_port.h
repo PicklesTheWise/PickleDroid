@@ -23,8 +23,6 @@
 #define I2C_MASTER_RX_BUF_DISABLE   0                          /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_TIMEOUT_MS       1000
 
-#define GPIO_INPUT_IO_4    4
-#define GPIO_INPUT_PIN_SEL  1ULL<<GPIO_INPUT_IO_4
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// Please update the following configuration according to your LCD spec //////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +67,7 @@
 #define EXAMPLE_LCD_BK_LIGHT_OFF_LEVEL  !EXAMPLE_LCD_BK_LIGHT_ON_LEVEL
 
 #define EXAMPLE_PIN_NUM_TOUCH_RST       (-1)            // -1 if not used (CH422G handles via TP_RST)
-#define EXAMPLE_PIN_NUM_TOUCH_INT       (4)             // GT911 interrupt pin
+#define EXAMPLE_PIN_NUM_TOUCH_INT       (-1)             // -1 if not used (polling mode)
 
 static const char *RGB_PORT_TAG = "rgb_port";
 

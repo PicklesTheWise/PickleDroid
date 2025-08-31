@@ -47,6 +47,29 @@ esp_err_t i2c_master_init(void)
 }
 
 #if CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
+/**
+ * @brief I2C master initialization
+ */
+static esp_err_t i2c_master_init(void)
+{
+    int i2c_master_port = I2C_MASTER_NUM;
+
+    i2c_config_t i2c_conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = I2C_MASTER_SDA_IO,
+        .scl_io_num = I2C_MASTER_SCL_IO,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master.clk_speed = I2C_MASTER_FREQ_HZ,
+    };
+
+    // Configure I2C parameters
+    i2c_param_config(i2c_master_port, &i2c_conf);
+
+    // Install I2C driver
+    return i2c_driver_install(i2c_master_port, i2c_conf.mode, 0, 0, 0);
+}
+
 // GPIO initialization
 void gpio_init(void)
 {
@@ -71,12 +94,12 @@ void waveshare_esp32_s3_touch_reset()
     // Reset the touch screen. It is recommended to reset the touch screen before using it.
     write_buf = 0x2C;
     i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-    ets_delay_us(100 * 1000);
+    esp_rom_delay_us(100 * 1000);
     gpio_set_level(GPIO_INPUT_IO_4, 0);
-    ets_delay_us(100 * 1000);
+    esp_rom_delay_us(100 * 1000);
     write_buf = 0x2E;
     i2c_master_write_to_device(I2C_MASTER_NUM, 0x38, &write_buf, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
-    ets_delay_us(200 * 1000);
+    esp_rom_delay_us(200 * 1000);
 }
 
 #endif
@@ -157,43 +180,14 @@ esp_err_t waveshare_esp32_s3_rgb_lcd_init()
     esp_lcd_touch_handle_t tp_handle = NULL; // Declare a handle for the touch panel
 
     // Initialize I2C bus first for CH422G communication
-    ESP_LOGI(RGB_PORT_TAG, "Initializing I2C bus for CH422G and touch");              
+    ESP_LOGI(RGB_PORT_TAG, "Initializing I2C bus for CH422G");
     ESP_ERROR_CHECK(i2c_master_init());
 
     // Perform LCD hardware reset via CH422G after I2C is ready
     ESP_LOGI(RGB_PORT_TAG, "Performing LCD hardware reset");
-    ESP_ERROR_CHECK(waveshare_rgb_lcd_reset()); 
+    ESP_ERROR_CHECK(waveshare_rgb_lcd_reset());
 
-#if CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
-    ESP_LOGI(RGB_PORT_TAG, "Initialize GPIO");      // Log GPIO initialization
-    gpio_init();                           // Initialize GPIO pins
-    ESP_LOGI(RGB_PORT_TAG, "Initialize Touch LCD"); // Log touch LCD initialization
-    waveshare_esp32_s3_touch_reset();      // Reset the touch panel
-
-    esp_lcd_panel_io_handle_t tp_io_handle = NULL;                                          // Declare a handle for touch panel I/O
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG(); // Configure I2C for GT911 touch controller
-
-    ESP_LOGI(RGB_PORT_TAG, "Initialize I2C panel IO");                                                                          // Log I2C panel I/O initialization
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2C_MASTER_NUM, &tp_io_config, &tp_io_handle)); // Create new I2C panel I/O
-
-    ESP_LOGI(RGB_PORT_TAG, "Initialize touch controller GT911"); // Log touch controller initialization
-    const esp_lcd_touch_config_t tp_cfg = {
-        .x_max = EXAMPLE_LCD_H_RES,                // Set maximum X coordinate
-        .y_max = EXAMPLE_LCD_V_RES,                // Set maximum Y coordinate
-        .rst_gpio_num = EXAMPLE_PIN_NUM_TOUCH_RST, // GPIO number for reset
-        .int_gpio_num = EXAMPLE_PIN_NUM_TOUCH_INT, // GPIO number for interrupt
-        .levels = {
-            .reset = 0,     // Reset level
-            .interrupt = 0, // Interrupt level
-        },
-        .flags = {
-            .swap_xy = 0,  // No swap of X and Y
-            .mirror_x = 0, // No mirroring of X
-            .mirror_y = 0, // No mirroring of Y
-        },
-    };
-    ESP_ERROR_CHECK(esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &tp_handle)); // Create new I2C GT911 touch controller
-#endif                                                                               // CONFIG_EXAMPLE_LCD_TOUCH_CONTROLLER_GT911
+    // Note: Touch controller initialization is handled separately in main.c
 
     ESP_ERROR_CHECK(lvgl_port_init(panel_handle, tp_handle)); // Initialize LVGL with the panel and touch handles
 

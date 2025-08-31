@@ -44,7 +44,7 @@ static esp_err_t gt911_read_reg(gt911_handle_t *handle, uint16_t reg, uint8_t *d
 
 esp_err_t gt911_reset_via_ch422g(gt911_handle_t *handle)
 {
-    ESP_LOGI(TAG, "Resetting GT911 via CH422G");
+    ESP_LOGI(TAG, "Resetting GT911 via CH422G using ESP-IDF demo sequence");
     
     // Configure CH422G to output mode
     uint8_t config_cmd = 0x01;
@@ -55,11 +55,11 @@ esp_err_t gt911_reset_via_ch422g(gt911_handle_t *handle)
         return ret;
     }
     
-    // Reset sequence: TP_RST low -> delay -> TP_RST high -> delay
+    // Reset sequence from ESP-IDF demo: TP_RST low -> delay -> TP_RST high -> delay
     uint8_t data_cmd;
     
-    // Pull TP_RST low (reset active)
-    data_cmd = 0x1C; // Base value without TP_RST bit (0x1E & ~0x02)
+    // Pull TP_RST low (reset active) - 0x2C = 0x2E & ~0x02
+    data_cmd = 0x2C; // Base value without TP_RST bit
     ret = i2c_master_write_to_device(handle->config.i2c_port, CH422G_DATA_ADDR, 
                                     &data_cmd, 1, GT911_TIMEOUT_MS / portTICK_PERIOD_MS);
     if (ret != ESP_OK) {
@@ -67,10 +67,18 @@ esp_err_t gt911_reset_via_ch422g(gt911_handle_t *handle)
         return ret;
     }
     
-    vTaskDelay(pdMS_TO_TICKS(100)); // 100ms reset hold
+    vTaskDelay(pdMS_TO_TICKS(100)); // 100ms reset hold (from ESP-IDF demo)
     
-    // Pull TP_RST high (reset inactive)
-    data_cmd = 0x1E; // Base value with TP_RST bit
+    // If INT pin is configured, set it low during reset
+    if (handle->config.int_pin >= 0) {
+        gpio_set_level(handle->config.int_pin, 0);
+        ESP_LOGI(TAG, "Set INT pin low during reset");
+    }
+    
+    vTaskDelay(pdMS_TO_TICKS(10)); // Additional 10ms delay
+    
+    // Pull TP_RST high (reset inactive) - 0x2E = base value with TP_RST bit
+    data_cmd = 0x2E; // Base value with TP_RST bit
     ret = i2c_master_write_to_device(handle->config.i2c_port, CH422G_DATA_ADDR, 
                                     &data_cmd, 1, GT911_TIMEOUT_MS / portTICK_PERIOD_MS);
     if (ret != ESP_OK) {
@@ -78,7 +86,13 @@ esp_err_t gt911_reset_via_ch422g(gt911_handle_t *handle)
         return ret;
     }
     
-    vTaskDelay(pdMS_TO_TICKS(200)); // 200ms stabilization
+    vTaskDelay(pdMS_TO_TICKS(200)); // 200ms stabilization (from ESP-IDF demo)
+    
+    // If INT pin is configured, set it high after reset
+    if (handle->config.int_pin >= 0) {
+        gpio_set_level(handle->config.int_pin, 1);
+        ESP_LOGI(TAG, "Set INT pin high after reset");
+    }
     
     ESP_LOGI(TAG, "GT911 reset complete");
     return ESP_OK;
@@ -107,10 +121,10 @@ esp_err_t gt911_init(const gt911_config_t *config, gt911_handle_t **handle)
     if ((*handle)->config.int_pin != GPIO_NUM_NC) {
         gpio_config_t io_conf = {
             .intr_type = GPIO_INTR_DISABLE,
-            .mode = GPIO_MODE_INPUT,
+            .mode = GPIO_MODE_OUTPUT,  // Changed to OUTPUT for manual control
             .pin_bit_mask = (1ULL << (*handle)->config.int_pin),
             .pull_down_en = GPIO_PULLDOWN_DISABLE,
-            .pull_up_en = GPIO_PULLUP_ENABLE,
+            .pull_up_en = GPIO_PULLUP_DISABLE,  // No pull-up since we're controlling it
         };
         esp_err_t ret = gpio_config(&io_conf);
         if (ret != ESP_OK) {
@@ -135,8 +149,25 @@ esp_err_t gt911_init(const gt911_config_t *config, gt911_handle_t **handle)
         ESP_LOGI(TAG, "GT911 Product ID: %c%c%c%c", pid[0], pid[1], pid[2], pid[3]);
         (*handle)->initialized = true;
     } else {
-        ESP_LOGW(TAG, "Failed to read GT911 Product ID, assuming device is present");
-        (*handle)->initialized = true; // Assume it's working for now
+        ESP_LOGW(TAG, "Failed to read GT911 Product ID at address 0x%02X: %s", 
+                 (*handle)->config.i2c_addr, esp_err_to_name(ret));
+        
+        // Try alternate address if current one failed
+        uint8_t alt_addr = ((*handle)->config.i2c_addr == GT911_I2C_ADDR_DEFAULT) ? 
+                          GT911_I2C_ADDR_ALT : GT911_I2C_ADDR_DEFAULT;
+        ESP_LOGI(TAG, "Trying alternate GT911 address 0x%02X", alt_addr);
+        
+        (*handle)->config.i2c_addr = alt_addr;
+        ret = gt911_read_reg(*handle, GT911_REG_PID, pid, 4);
+        if (ret == ESP_OK) {
+            ESP_LOGI(TAG, "GT911 found at alternate address 0x%02X, Product ID: %c%c%c%c", 
+                     alt_addr, pid[0], pid[1], pid[2], pid[3]);
+            (*handle)->initialized = true;
+        } else {
+            ESP_LOGE(TAG, "GT911 not found at either address");
+            free(*handle);
+            return ESP_ERR_NOT_FOUND;
+        }
     }
     
     ESP_LOGI(TAG, "GT911 initialization complete");
