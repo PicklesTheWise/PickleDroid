@@ -7,13 +7,13 @@
 #include "gt911_touch.h"
 
 static const char *TAG = "MAIN";
-static lv_obj_t *btn_label = NULL;
-static int touch_count = 0;
 static gt911_handle_t *gt911_handle = NULL;
 static lv_indev_t *touch_indev = NULL;
+static lv_obj_t *btn_label = NULL;
+static int touch_count = 0;
 
 /**
- * @brief Perform GT911 reset sequence
+ * @brief GT911 reset sequence
  */
 void gt911_reset_sequence(void)
 {
@@ -46,6 +46,10 @@ void gt911_reset_sequence(void)
     i2c_master_write_to_device(0, 0x38, &data_cmd, 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
     vTaskDelay(pdMS_TO_TICKS(200));
 }
+
+/**
+ * @brief LVGL touch input callback
+ */
 void gt911_lvgl_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
 {
     static gt911_touch_point_t last_touch = {0};
@@ -53,31 +57,33 @@ void gt911_lvgl_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     
     if (gt911_handle) {
         esp_err_t ret = gt911_read_touch(gt911_handle, &touch_data);
-        if (ret == ESP_OK) {
-            if (touch_data.point_count > 0 && touch_data.points[0].is_pressed) {
-                data->state = LV_INDEV_STATE_PRESSED;
-                data->point.x = touch_data.points[0].x;
-                data->point.y = touch_data.points[0].y;
-                last_touch = touch_data.points[0];
-                ESP_LOGI(TAG, "TOUCH: x=%d, y=%d", touch_data.points[0].x, touch_data.points[0].y);
-            } else {
-                data->state = LV_INDEV_STATE_RELEASED;
-                data->point.x = last_touch.x;
-                data->point.y = last_touch.y;
-            }
+        ESP_LOGI(TAG, "gt911_read_touch returned %d, point_count=%d", ret, (int)touch_data.point_count);
+        if (ret == ESP_OK && touch_data.point_count > 0) {
+            ESP_LOGI(TAG, "TOUCH DETECTED! x=%d, y=%d, size=%d", 
+                     touch_data.points[0].x, touch_data.points[0].y, touch_data.points[0].size);
+            
+            data->state = LV_INDEV_STATE_PRESSED;
+            data->point.x = touch_data.points[0].x;
+            data->point.y = touch_data.points[0].y;
+            
+            last_touch = touch_data.points[0];
         } else {
+            if (ret != ESP_OK) {
+                ESP_LOGW(TAG, "gt911_read_touch failed: %d", ret);
+            }
             data->state = LV_INDEV_STATE_RELEASED;
-            data->point.x = last_touch.x;
-            data->point.y = last_touch.y;
         }
     } else {
+        ESP_LOGW(TAG, "gt911_handle is NULL in gt911_lvgl_read");
         data->state = LV_INDEV_STATE_RELEASED;
         data->point.x = last_touch.x;
         data->point.y = last_touch.y;
     }
 }
 
-// Button click event handler
+/**
+ * @brief Button click event handler
+ */
 static void btn_click_handler(lv_event_t *e)
 {
     touch_count++;
@@ -87,23 +93,30 @@ static void btn_click_handler(lv_event_t *e)
     ESP_LOGI(TAG, "Button touched! Count: %d", touch_count);
 }
 
-void app_main(void) {
-    ESP_LOGI(TAG, "=== PickleDroid Display Starting ===");
+void app_main(void)
+{
+    ESP_LOGI(TAG, "Initializing PickleDroid Display...");
     
-    // Initialize RGB LCD via port layer (this also initializes I2C)
+    // Initialize the RGB LCD
     ESP_LOGI(TAG, "Initializing RGB LCD...");
-    ESP_ERROR_CHECK(waveshare_esp32_s3_rgb_lcd_init());
-    wavesahre_rgb_lcd_bl_on();
-    
-    // Initialize GT911 touch controller
+    esp_err_t lcd_ret = waveshare_esp32_s3_rgb_lcd_init();
+    if (lcd_ret != ESP_OK) {
+        ESP_LOGE(TAG, "RGB LCD initialization failed: %s", esp_err_to_name(lcd_ret));
+        return;
+    }
+    ESP_LOGI(TAG, "RGB LCD initialized successfully");
+
     ESP_LOGI(TAG, "Initializing GT911 touch controller...");
+    
+    // Perform GT911 reset sequence
     gt911_reset_sequence();
     
+    // Configure GT911
     gt911_config_t gt911_config = {
-        .i2c_port = 0,
-        .i2c_addr = GT911_I2C_ADDR_DEFAULT,
-        .int_pin = GPIO_NUM_NC,
-        .rst_pin = GPIO_NUM_NC,
+        .i2c_port = I2C_NUM_0,
+        .i2c_addr = GT911_I2C_ADDR_DEFAULT,  // Use 0x5D based on our previous testing
+        .int_pin = GPIO_NUM_4,
+        .rst_pin = -1,  // We handle reset manually via CH422G
         .max_x = 1024,
         .max_y = 600
     };
@@ -125,19 +138,22 @@ void app_main(void) {
         ESP_LOGW(TAG, "Continuing without touch functionality");
     }
 
+    // Create a simple UI
     lv_obj_t *scr = lv_scr_act();
     lv_obj_set_style_bg_color(scr, lv_color_make(0x00,0x40,0x80), 0);
     
+    // Create a button
     lv_obj_t *btn = lv_btn_create(scr);
     lv_obj_set_size(btn, 200, 80);
     lv_obj_center(btn);
     lv_obj_add_event_cb(btn, btn_click_handler, LV_EVENT_CLICKED, NULL);
     
+    // Create button label
     btn_label = lv_label_create(btn);
     lv_label_set_text(btn_label, "Touch Me!");
     lv_obj_center(btn_label);
 
-    // Create a status label at the top
+    // Create a status label
     lv_obj_t *status_label = lv_label_create(scr);
     if (touch_ret == ESP_OK) {
         lv_label_set_text(status_label, "GT911 Touch Ready - Try touching the button!");

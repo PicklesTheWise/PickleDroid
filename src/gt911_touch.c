@@ -156,11 +156,15 @@ esp_err_t gt911_read_touch(gt911_handle_t *handle, gt911_touch_data_t *touch_dat
     uint8_t status;
     esp_err_t ret = gt911_read_reg(handle, GT911_REG_STATUS, &status, 1);
     if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "Failed to read GT911 status register: %s", esp_err_to_name(ret));
         return ret;
     }
     
+    ESP_LOGI(TAG, "GT911 status: 0x%02X", status);
+    
     // Check if touch data is ready
     if (!(status & 0x80)) {
+        ESP_LOGD(TAG, "No touch data ready");
         return ESP_OK; // No new touch data
     }
     
@@ -169,6 +173,8 @@ esp_err_t gt911_read_touch(gt911_handle_t *handle, gt911_touch_data_t *touch_dat
     if (point_count > 5) {
         point_count = 5; // GT911 supports max 5 points
     }
+    
+    ESP_LOGI(TAG, "Touch points detected: %d", point_count);
     
     touch_data->point_count = point_count;
     
