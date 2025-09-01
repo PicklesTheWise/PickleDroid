@@ -22,9 +22,6 @@ void gt911_lvgl_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     if (gt911_handle) {
         esp_err_t ret = gt911_read_touch(gt911_handle, &touch_data);
         if (ret == ESP_OK && touch_data.point_count > 0) {
-            ESP_LOGI(TAG, "TOUCH DETECTED! x=%d, y=%d, size=%d",
-                     touch_data.points[0].x, touch_data.points[0].y, touch_data.points[0].size);
-
             data->state = LV_INDEV_STATE_PRESSED;
             data->point.x = touch_data.points[0].x;
             data->point.y = touch_data.points[0].y;
@@ -42,7 +39,6 @@ void gt911_lvgl_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
             data->point.y = last_touch.y;
         }
     } else {
-        ESP_LOGW(TAG, "gt911_handle is NULL in gt911_lvgl_read");
         data->state = LV_INDEV_STATE_RELEASED;
         data->point.x = last_touch.x;
         data->point.y = last_touch.y;
@@ -73,11 +69,10 @@ void app_main(void)
     ESP_LOGI(TAG, "LCD initialized successfully");
 
     // Turn on the screen backlight
-    wavesahre_rgb_lcd_bl_on();
+    waveshare_rgb_lcd_bl_on();
     ESP_LOGI(TAG, "Backlight turned on");
 
     // Initialize GT911 touch controller
-    ESP_LOGI(TAG, "Initializing GT911 touch controller...");
     gt911_config_t gt911_config = {
         .i2c_port = I2C_NUM_0,
         .i2c_addr = GT911_I2C_ADDR_DEFAULT,
@@ -92,19 +87,14 @@ void app_main(void)
 
     ret = gt911_init(&gt911_config, &gt911_handle);
     if (ret == ESP_OK) {
-        ESP_LOGI(TAG, "GT911 touch controller initialized successfully");
-
         // Register GT911 as LVGL input device
         static lv_indev_drv_t indev_drv;
         lv_indev_drv_init(&indev_drv);
         indev_drv.type = LV_INDEV_TYPE_POINTER;
         indev_drv.read_cb = gt911_lvgl_read;
         lv_indev_t *touch_indev = lv_indev_drv_register(&indev_drv);
-
-        ESP_LOGI(TAG, "GT911 registered with LVGL as input device");
     } else {
-        ESP_LOGW(TAG, "GT911 initialization failed: %s", esp_err_to_name(ret));
-        ESP_LOGW(TAG, "Continuing without touch functionality");
+        // Continue without touch functionality
     }    // Lock the mutex due to the LVGL APIs are not thread-safe
     if (lvgl_port_lock(-1)) {
         ESP_LOGI(TAG, "Creating simple touch demo...");
@@ -139,7 +129,7 @@ void app_main(void)
         // Create touch coordinate display
         touch_label = lv_label_create(scr);
         lv_label_set_text(touch_label, "Touch: x=0, y=0");
-        lv_obj_align(status_label, LV_ALIGN_TOP_MID, 0, 50);
+        lv_obj_align(touch_label, LV_ALIGN_TOP_MID, 0, 50);
         lv_obj_set_style_text_color(touch_label, lv_color_white(), 0);
 
         // Release the mutex

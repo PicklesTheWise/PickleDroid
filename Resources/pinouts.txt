@@ -1,0 +1,64 @@
+LCD interface: The interface to connect the LCD cable
+ESP32-S3	LCD
+GPIO0	G3
+GPIO1	R3
+GPIO2	R4
+GPIO3	VSYNC
+GPIO4	TP_IRQ
+GPIO5	DE
+GPIO7	PCLK
+GPIO8	TP_SDA
+GPIO9	TP_SCL
+GPIO10	B7
+GPIO14	B3
+GPIO17	B6
+GPIO18	B5
+GPIO21	G7
+GPIO38	B4
+GPIO39	G2
+GPIO40	R7
+GPIO41	R6
+GPIO42	R5
+GPIO45	G4
+GPIO46	HSYNC
+GPIO47	G6
+GPIO48	G5
+CH422G	LCD
+EXIO1	TP_RST
+EXIO2	DISP
+EXIO3	LCD_RST
+
+
+USB interface: Used for power supply and flashing
+ESP32-S3	USB
+GPIO19	USB_DN
+GPIO20	USB_DP
+
+
+TF card interface: The interface used to connect the TF card
+ESP32-S3	SD
+GPIO11	MOSI
+GPIO12	SCK
+GPIO13	MISO
+CH422G	TF
+EXIO4	SD_CS
+
+
+RS485 interface: The development board is equipped with an RS485 interface, allowing direct connection for device communication, with automatic switching of the circuit's transmit and receive modes
+ESP32-S3	RS485
+GPIO43	RS485_RXD
+GPIO44	RS485_TXD
+
+
+CAN interface: Implement the transmission and reception control, data analysis, acquisition and monitoring of the CAN bus network
+ESP32-S3	CAN
+GPIO15	CANTX
+GPIO16	CANRX
+
+
+Isolated IO interface: Isolated IO is composed of digital output, digital input and input signal common end, and the IO level can reach 5~36V
+CH422G	DI/DO
+EXIO0	DI0
+EXIO5	DI1
+OD0	DO0
+OD1	DO1
