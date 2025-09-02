@@ -5,6 +5,7 @@
 #include <esp_lcd_panel_rgb.h>
 #include <driver/gpio.h>
 #include <esp_heap_caps.h>
+#include <bb_captouch.h>
 
 // Display configuration
 #define LCD_WIDTH   1024
@@ -57,10 +58,19 @@
 #define CH422G_CONFIG_ADDR  0x24
 #define CH422G_DATA_ADDR    0x38
 
+// Touch controller configuration  
+BBCapTouch touch;
+#define TOUCH_SDA_PIN 8   // TP_SDA (GPIO8) - same as I2C_SDA
+#define TOUCH_SCL_PIN 9   // TP_SCL (GPIO9) - same as I2C_SCL  
+#define TOUCH_I2C_ADDR 0x5D
+
 // LVGL display buffer
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *disp_draw_buf;
 static lv_disp_drv_t disp_drv;
+
+// LVGL touch input driver
+static lv_indev_drv_t indev_drv;
 
 // RGB LCD panel handle
 static esp_lcd_panel_handle_t panel_handle = NULL;
@@ -84,6 +94,8 @@ void setup_ch422g();
 void lcd_reset_sequence();
 void init_rgb_lcd();
 void display_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+void init_touch();
+void touch_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data);
 void create_demo_ui();
 
 void setup() {
@@ -98,39 +110,82 @@ void setup() {
     }
     
     if (Serial) {
-        Serial.println("ESP32-S3-Touch-LCD-5 LVGL Demo Starting...");
+        Serial.println("=== ESP32-S3-Touch-LCD-5 LVGL Demo Starting ===");
+        Serial.printf("Free heap: %d bytes\n", ESP.getFreeHeap());
+        Serial.printf("PSRAM size: %d bytes\n", ESP.getPsramSize());
+        Serial.printf("Free PSRAM: %d bytes\n", ESP.getFreePsram());
     }
 
     // Initialize I2C
+    if (Serial) {
+        Serial.printf("Initializing I2C on SDA=%d, SCL=%d, Freq=%d...\n", I2C_SDA, I2C_SCL, I2C_FREQ);
+    }
     Wire.begin(I2C_SDA, I2C_SCL, I2C_FREQ);
     delay(100);
+    if (Serial) {
+        Serial.println("I2C initialized successfully");
+    }
 
     // Setup CH422G I/O expander and LCD reset
+    if (Serial) {
+        Serial.println("Setting up CH422G I/O expander...");
+    }
     setup_ch422g();
+    
+    if (Serial) {
+        Serial.println("Performing LCD reset sequence...");
+    }
     lcd_reset_sequence();
 
     // Initialize RGB LCD panel
+    if (Serial) {
+        Serial.println("Initializing RGB LCD panel...");
+        Serial.printf("Free heap before LCD init: %d bytes\n", ESP.getFreeHeap());
+    }
     init_rgb_lcd();
 
     if (Serial) {
         Serial.println("Hardware setup complete, initializing LVGL...");
+        Serial.printf("Free heap after LCD init: %d bytes\n", ESP.getFreeHeap());
     }
 
     // Initialize LVGL
+    if (Serial) {
+        Serial.println("Initializing LVGL...");
+    }
     lv_init();
+    if (Serial) {
+        Serial.println("LVGL core initialized");
+    }
 
     // Create display buffer
+    if (Serial) {
+        Serial.printf("Allocating display buffer: %d bytes\n", sizeof(lv_color_t) * LCD_WIDTH * LCD_HEIGHT / 10);
+        Serial.printf("Free heap before buffer allocation: %d bytes\n", ESP.getFreeHeap());
+    }
     disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * LCD_HEIGHT / 10, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
     if (!disp_draw_buf) {
         if (Serial) {
             Serial.println("ERROR: Failed to allocate display buffer!");
+            Serial.printf("Requested: %d bytes, Available: %d bytes\n", 
+                         sizeof(lv_color_t) * LCD_WIDTH * LCD_HEIGHT / 10, ESP.getFreeHeap());
         }
         return;
     }
+    if (Serial) {
+        Serial.println("Display buffer allocated successfully");
+        Serial.printf("Free heap after buffer allocation: %d bytes\n", ESP.getFreeHeap());
+    }
     
     lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, LCD_WIDTH * LCD_HEIGHT / 10);
+    if (Serial) {
+        Serial.println("LVGL display buffer initialized");
+    }
 
     // Initialize display driver
+    if (Serial) {
+        Serial.println("Initializing LVGL display driver...");
+    }
     lv_disp_drv_init(&disp_drv);
     disp_drv.hor_res = LCD_WIDTH;
     disp_drv.ver_res = LCD_HEIGHT;
@@ -139,18 +194,56 @@ void setup() {
     disp_drv.full_refresh = 0;
     disp_drv.direct_mode = 0;
     
+    if (Serial) {
+        Serial.println("Registering LVGL display driver...");
+    }
     lv_disp_t *disp = lv_disp_drv_register(&disp_drv);
+    if (Serial) {
+        Serial.printf("Display driver registered: %p\n", disp);
+    }
+
+    // Initialize touch input
+    if (Serial) {
+        Serial.println("Initializing touch input...");
+    }
+    init_touch();
+    if (Serial) {
+        Serial.println("Touch input initialized");
+    }
 
     // Create demo UI
+    if (Serial) {
+        Serial.println("Creating demo UI...");
+    }
     create_demo_ui();
+    if (Serial) {
+        Serial.println("Demo UI created successfully");
+    }
 
     if (Serial) {
-        Serial.println("LVGL setup complete!");
+        Serial.println("=== LVGL SETUP COMPLETE ===");
+        Serial.printf("Final free heap: %d bytes\n", ESP.getFreeHeap());
+        Serial.println("System ready for operation");
     }
 }
 
 void loop() {
+    static unsigned long last_debug = 0;
+    static int loop_count = 0;
+    
     lv_timer_handler();
+    
+    // Debug output every 5 seconds
+    loop_count++;
+    if (millis() - last_debug > 5000) {
+        if (Serial) {
+            Serial.printf("Loop running: %d iterations, Free heap: %d bytes\n", 
+                         loop_count, ESP.getFreeHeap());
+        }
+        last_debug = millis();
+        loop_count = 0;
+    }
+    
     delay(5);
 }
 
@@ -222,7 +315,10 @@ void lcd_reset_sequence() {
 
 void init_rgb_lcd() {
     if (Serial) {
-        Serial.println("Initializing RGB LCD panel...");
+        Serial.println("=== RGB LCD INITIALIZATION ===");
+        Serial.printf("Target resolution: %dx%d\n", LCD_H_RES, LCD_V_RES);
+        Serial.printf("Pixel clock: %d Hz\n", LCD_PIXEL_CLOCK_HZ);
+        Serial.printf("Free heap before RGB config: %d bytes\n", ESP.getFreeHeap());
     }
 
     // RGB LCD panel configuration
@@ -275,16 +371,32 @@ void init_rgb_lcd() {
         .on_frame_trans_done = nullptr,
         .user_ctx = nullptr,
         .flags = {
-            .fb_in_psram = 1, // Frame buffer in PSRAM
+            .fb_in_psram = 1, // Use PSRAM for frame buffer (we have 8MB PSRAM)
         },
     };
+
+    if (Serial) {
+        Serial.println("Creating RGB panel...");
+        Serial.printf("Free heap before panel creation: %d bytes\n", ESP.getFreeHeap());
+        Serial.printf("Required frame buffer size: %d bytes\n", LCD_H_RES * LCD_V_RES * 2);
+    }
 
     esp_err_t ret = esp_lcd_new_rgb_panel(&panel_config, &panel_handle);
     if (ret != ESP_OK) {
         if (Serial) {
-            Serial.printf("ERROR: Failed to create RGB panel: %s\n", esp_err_to_name(ret));
+            Serial.printf("ERROR: Failed to create RGB panel: %s (0x%x)\n", esp_err_to_name(ret), ret);
+            Serial.printf("Free heap: %d bytes\n", ESP.getFreeHeap());
+            Serial.printf("Frame buffer needed: %d bytes\n", LCD_H_RES * LCD_V_RES * 2);
+            if (ret == ESP_ERR_NO_MEM) {
+                Serial.println("Not enough memory for frame buffer!");
+            }
         }
         return;
+    }
+    
+    if (Serial) {
+        Serial.println("RGB panel created successfully");
+        Serial.printf("Free heap after panel creation: %d bytes\n", ESP.getFreeHeap());
     }
 
     ret = esp_lcd_panel_init(panel_handle);
@@ -332,6 +444,77 @@ void display_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *c
     lv_disp_flush_ready(disp_drv);
 }
 
+// Initialize touch controller
+void init_touch() {
+    if (Serial) {
+        Serial.println("Initializing GT911 touch controller...");
+    }
+    
+    // Configure touch controller pins
+    pinMode(TOUCH_INT, INPUT);
+    
+    // Note: bb_captouch will use the existing I2C instance (Wire)
+    // Since we already called Wire.begin(I2C_SDA, I2C_SCL, I2C_FREQ)
+    // Initialize bb_captouch for GT911 using same I2C pins
+    if (touch.init(TOUCH_I2C_ADDR, TOUCH_SDA_PIN, TOUCH_SCL_PIN)) {
+        if (Serial) {
+            Serial.println("GT911 touch controller initialized successfully");
+        }
+    } else {
+        if (Serial) {
+            Serial.println("ERROR: Failed to initialize GT911 touch controller");
+        }
+        return;
+    }
+    
+    // Initialize LVGL input device driver
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = touch_read;
+    lv_indev_drv_register(&indev_drv);
+    
+    if (Serial) {
+        Serial.println("Touch input driver registered with LVGL");
+    }
+}
+
+// Touch read callback for LVGL
+void touch_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
+    static int16_t last_x = 0;
+    static int16_t last_y = 0;
+    static bool touched = false;
+    
+    // Read touch data from GT911
+    TOUCHINFO ti;
+    if (touch.getSamples(&ti)) {
+        if (ti.count > 0) {
+            // Map touch coordinates to display coordinates
+            // GT911 coordinates may need mapping depending on orientation
+            data->point.x = ti.x[0];
+            data->point.y = ti.y[0];
+            data->state = LV_INDEV_STATE_PR;
+            
+            last_x = data->point.x;
+            last_y = data->point.y;
+            touched = true;
+            
+            if (Serial && touched) {
+                Serial.printf("Touch: x=%d, y=%d\n", data->point.x, data->point.y);
+            }
+        } else {
+            data->point.x = last_x;
+            data->point.y = last_y;
+            data->state = LV_INDEV_STATE_REL;
+            touched = false;
+        }
+    } else {
+        data->point.x = last_x;
+        data->point.y = last_y;
+        data->state = LV_INDEV_STATE_REL;
+        touched = false;
+    }
+}
+
 void create_demo_ui() {
     // Set background color
     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x003a57), LV_PART_MAIN);
@@ -340,7 +523,7 @@ void create_demo_ui() {
     // Create main label
     lv_obj_t *label = lv_label_create(lv_scr_act());
     lv_label_set_text(label, "ESP32-S3-Touch-LCD-5\nLVGL + RGB Display\nDemo Running!");
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, 0);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
     lv_obj_set_style_text_color(label, lv_color_white(), 0);
     lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, -50);
